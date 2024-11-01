@@ -10,7 +10,7 @@ from . import auth
 from .auth import get_current_user, oauth2_scheme, refresh_access_token, verify_token
 from .shcemas import UserBase, TokenData
 
-router = APIRouter(prefix="/auth")
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/token")
