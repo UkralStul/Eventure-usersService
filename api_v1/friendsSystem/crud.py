@@ -76,7 +76,6 @@ async def remove_friend(
     target_user_id: int,
     session: AsyncSession,
 ):
-    # Check if a friendship exists
     stmt = select(Friendship).filter(
         ((Friendship.user_id == user_id) & (Friendship.friend_id == target_user_id))
         | ((Friendship.user_id == target_user_id) & (Friendship.friend_id == user_id))
@@ -88,8 +87,30 @@ async def remove_friend(
     if not friendship_entry:
         raise HTTPException(status_code=400, detail="No friendship exists.")
 
-    # Delete the friendship
     await session.delete(friendship_entry)
     await session.commit()
 
     return {"message": "Friendship removed."}
+
+
+async def get_friends(
+    user_id: int,
+    session: AsyncSession,
+):
+    friend_records = []
+
+    stmt_as_user = select(Friendship.friend_id).filter(
+        (Friendship.user_id == user_id) & (Friendship.status == "accepted")
+    )
+
+    stmt_as_friend = select(Friendship.user_id).filter(
+        (Friendship.friend_id == user_id) & (Friendship.status == "accepted")
+    )
+
+    friends_as_user = await session.execute(stmt_as_user)
+    friends_as_friend = await session.execute(stmt_as_friend)
+
+    friend_records.extend(friends_as_user.scalars().all())
+    friend_records.extend(friends_as_friend.scalars().all())
+
+    return friend_records

@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .crud import accept_friend_request, remove_friend, send_friends_request
+from .crud import (
+    accept_friend_request,
+    remove_friend,
+    send_friends_request,
+    get_friends,
+)
 from core.models import db_helper, User
 from auth import get_current_user
 
@@ -33,3 +38,11 @@ async def remove_friend_view(
     user: User = Depends(get_current_user),
 ):
     return await remove_friend(user.id, target_user_id, session)
+
+
+@router.get("/friendsList")
+async def get_frineds_list(
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    return await get_friends(user_id=user.id, session=session)
