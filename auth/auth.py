@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import time
 import jwt
-from fastapi import Depends
+from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -56,14 +56,16 @@ async def decode_access_token(
     try:
         payload = jwt.decode(token, secret, algorithms=[algorithm])
         user_id: str = payload.get("sub")
-        exp = payload.get("exp")
-        if exp < time.mktime(datetime.now().timetuple()):
-            raise ValueError("Token has expired")
         if user_id is None:
             raise ValueError("User ID not found in token")
         return user_id
-    except jwt.PyJWTError:
-        raise ValueError("Token is invalid or has expired")
+    except jwt.PyJWTError as e:
+        if str(e) == "Signature has expired":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired"
+            )
+        else:
+            raise ValueError(str(e))
 
 
 async def verify_token(

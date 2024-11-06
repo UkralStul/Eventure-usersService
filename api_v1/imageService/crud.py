@@ -1,8 +1,10 @@
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import UploadFile, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import User
+from sqlalchemy import select
 
 UPLOAD_DIR = Path(__file__).resolve().parent.parent.parent / "uploads/avatars"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -14,7 +16,8 @@ async def save_image(
     user: User,
 ) -> User:
     extension = file.filename.split(".")[-1]
-    filename = f"{user.id}_avatar_image.{extension}"
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"{user.id}_avatar_image_{timestamp}.{extension}"
     file_location = UPLOAD_DIR / filename
 
     try:
@@ -29,3 +32,17 @@ async def save_image(
         raise HTTPException(status_code=500, detail=f"Could not update user: {str(e)}")
 
     return user
+
+
+async def get_user_avatar(
+    user_id: int,
+    session: AsyncSession,
+) -> Path:
+    stmt = select(User).filter(User.id == user_id)
+    result = await session.execute(stmt)
+    user = result.scalars().first()
+    if user:
+        if user.profile_photo:
+            return UPLOAD_DIR / user.profile_photo
+        raise HTTPException(status_code=404, detail="User has no avatar")
+    raise HTTPException(status_code=404, detail="Could not find user")
