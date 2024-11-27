@@ -21,17 +21,17 @@ jobs:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3  # Настройка SSH-агента для авторизации
         with:
-          ssh-private-key: ${{ secrets.SSH_PUBLIC_KEY }}  # Использование приватного ключа из Secrets GitHub
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Использование приватного ключа из Secrets GitHub
 
       # Шаг 3: Копирование файлов на сервер
       - name: Copy files to server (Debian)
         run: |
-          rsync -avz --exclude='.git' ./ pitsa@185.188.181.246:/usersService # Копирование файлов на сервер с исключением папки .git
+          rsync -avz -e "ssh -p 20920" --exclude='.git' ./ pitsa@185.188.181.246:/usersService # Копирование файлов на сервер с исключением папки .git
 
       # Шаг 4: Деплой приложения на сервере
       - name: Deploy application
         run: |
-          ssh pitsa@185.188.181.246 << 'EOF'  # Подключение по SSH
+          ssh -p 20920 pitsa@185.188.181.246 << 'EOF'  # Подключение по SSH
           docker-compose pull  # Обновление образов Docker
           docker-compose up -d --build  # Перезапуск контейнеров с новым кодом
           EOF
