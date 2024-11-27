@@ -1,4 +1,3 @@
 .venv
-uploads
 poetry.lock
 pyproject.toml
