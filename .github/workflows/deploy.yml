@@ -15,15 +15,13 @@ jobs:
     steps:
       # Шаг 1: Клонирование репозитория
       - name: Checkout repository
-        uses: actions/checkout@v3  # Используется для клонирования репозитория в runner
+        uses: actions/checkout@v4  # Используется для клонирования репозитория в runner
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          # Добавить сервер в список известных хостов для предотвращения запроса на подтверждение
-          ssh-keyscan -t rsa your.server.com >> ~/.ssh/known_hosts
+      # Шаг 2: Настройка SSH (для доступа к серверу)
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3  # Настройка SSH-агента для авторизации
+        with:
+          ssh-private-key: ${{ secrets.SSH_PUBLIC_KEY }}  # Использование приватного ключа из Secrets GitHub
 
       # Шаг 3: Копирование файлов на сервер
       - name: Copy files to server (Debian)
