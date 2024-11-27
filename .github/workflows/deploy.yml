@@ -27,7 +27,7 @@ jobs:
       - name: Copy files to server (Debian)
         run: |
           ssh-keyscan -p 20920 185.188.181.246 >> ~/.ssh/known_hosts
-          rsync -avz -e "ssh -p 20920" --exclude='.git' ./ pitsa@185.188.181.246:/usersService
+          rsync -avz -e "ssh -p 20920" --exclude='.git' ./ pitsa@185.188.181.246:~/usersService
 
       # Шаг 4: Деплой приложения на сервере
       - name: Deploy application
