@@ -32,7 +32,6 @@ jobs:
       - name: Deploy application
         run: |
           ssh pitsa@185.188.181.246 << 'EOF'  # Подключение по SSH
-          cd usersService  # Переход в директорию с приложением
           docker-compose pull  # Обновление образов Docker
           docker-compose up -d --build  # Перезапуск контейнеров с новым кодом
           EOF
