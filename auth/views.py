@@ -87,3 +87,7 @@ async def verify(
 
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
+
+@router.get('/getTest')
+async def get_test():
+    return 'Test'
