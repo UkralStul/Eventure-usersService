@@ -18,7 +18,7 @@ class AuthJWT(BaseModel):
 
 class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
-    db_url: str = "postgresql+asyncpg://postgres:7243@localhost:5432/userService"
+    db_url: str = "postgresql+asyncpg://postgres:7243@db2:5432/userService"
     echo: bool = False
     auth_jwt: AuthJWT = AuthJWT()
 
