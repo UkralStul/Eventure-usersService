@@ -1,7 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import UploadFile, HTTPException
+from fastapi import UploadFile, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import User
 from sqlalchemy import select
@@ -44,5 +44,9 @@ async def get_user_avatar(
     if user:
         if user.profile_photo:
             return UPLOAD_DIR / user.profile_photo
-        raise HTTPException(status_code=404, detail="User has no avatar")
-    raise HTTPException(status_code=404, detail="Could not find user")
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="User has no avatar"
+        )
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Could not find user"
+    )

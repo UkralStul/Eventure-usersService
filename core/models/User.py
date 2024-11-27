@@ -21,5 +21,5 @@ class User(Base):
     sent_messages: Mapped[list["Message"]] = relationship(back_populates="sender")
     conversations: Mapped[list["Conversation"]] = relationship(
         secondary=conversation_user_association_table,
-        back_populates="conversations",
+        back_populates="users",
     )

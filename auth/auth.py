@@ -53,6 +53,8 @@ async def decode_access_token(
     algorithm: str = settings.auth_jwt.algorithm,
     secret: str = settings.auth_jwt.secret_key,
 ) -> str:
+    if not token:
+        raise ValueError("Token is missing")
     try:
         payload = jwt.decode(token, secret, algorithms=[algorithm])
         user_id: str = payload.get("sub")

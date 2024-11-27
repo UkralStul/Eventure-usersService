@@ -21,7 +21,7 @@ async def upload_avatar(
 
 
 @router.get("/avatar/{user_id}", response_class=FileResponse)
-async def get_avitar(
+async def get_avatar(
     user_id: int,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
@@ -29,7 +29,10 @@ async def get_avitar(
         avatar_path = await get_user_avatar(user_id=user_id, session=session)
         if avatar_path.exists():
             return FileResponse(avatar_path, headers={"Cache-Control": "no-store"})
-        else:
+    except HTTPException as e:
+        if e.status_code == 404:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.detail)
+        elif e.status_code == 406:
             default_avatar_path = (
                 Path(__file__).resolve().parent.parent.parent
                 / "uploads/avatars/default-user-image.jpg"
@@ -37,7 +40,3 @@ async def get_avitar(
             return FileResponse(
                 default_avatar_path, headers={"Cache-Control": "no-store"}
             )
-    except HTTPException as e:
-        if e.status_code == 404:
-            raise HTTPException(status_code=404, detail="Could not find user")
-        raise e

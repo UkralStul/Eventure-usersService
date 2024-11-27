@@ -18,11 +18,14 @@ async def login_for_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    access_token, refresh_token, user = await auth.authenticate_user(
+    result = await auth.authenticate_user(
         username=form_data.username,
         password=form_data.password,
         session=session,
     )
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    access_token, refresh_token, user = result
     return {
         "access_token": access_token,
         "token_type": "bearer",

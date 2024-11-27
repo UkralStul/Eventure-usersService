@@ -14,11 +14,9 @@ if TYPE_CHECKING:
 class Message(Base):
     __tablename__ = "Messages"
 
-    sender_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("Users.id"), nullable=False
-    )
+    sender_id: Mapped[int] = mapped_column(ForeignKey("Users.id"), nullable=False)
     conversation_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("Conversations.id"), nullable=False
+        ForeignKey("Conversations.id"), nullable=False
     )
     content: Mapped[str] = mapped_column(String, nullable=False)
     timestamp: Mapped[datetime] = mapped_column(
