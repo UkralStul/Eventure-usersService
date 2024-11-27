@@ -91,4 +91,4 @@ async def verify(
 
 @router.get("/getTest")
 async def get_test():
-    return "Test7"
+    return "Test10"
