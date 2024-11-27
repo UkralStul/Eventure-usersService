@@ -15,11 +15,11 @@ jobs:
     steps:
       # Шаг 1: Клонирование репозитория
       - name: Checkout repository
-        uses: actions/checkout@v3  # Используется для клонирования репозитория в runner
+        uses: actions/checkout@v4  # Используется для клонирования репозитория в runner
 
       # Шаг 2: Настройка SSH (для доступа к серверу)
       - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.8.1  # Настройка SSH-агента для авторизации
+        uses: webfactory/ssh-agent@v0.5.3  # Настройка SSH-агента для авторизации
         with:
           ssh-private-key: ${{ secrets.Kikitoz_Server }}  # Использование приватного ключа из Secrets GitHub
 
