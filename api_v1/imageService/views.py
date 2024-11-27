@@ -35,7 +35,7 @@ async def get_avatar(
         elif e.status_code == 406:
             default_avatar_path = (
                 Path(__file__).resolve().parent.parent.parent
-                / "uploads/avatars/default-user-image.jpg"
+                / "uploads/defaults/default-user-image.jpg"
             )
             return FileResponse(
                 default_avatar_path, headers={"Cache-Control": "no-store"}
