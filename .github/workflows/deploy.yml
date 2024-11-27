@@ -21,7 +21,7 @@ jobs:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3  # Настройка SSH-агента для авторизации
         with:
-          ssh-private-key: ${{ secrets.SSHDEPLOY }}  # Использование приватного ключа из Secrets GitHub
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Использование приватного ключа из Secrets GitHub
 
       # Шаг 3: Копирование файлов на сервер
       - name: Copy files to server (Debian)
