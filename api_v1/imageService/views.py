@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, UploadFile, File, status, HTTPException
@@ -37,6 +38,14 @@ async def get_avatar(
                 Path(__file__).resolve().parent.parent.parent
                 / "uploads/defaults/default-user-image.jpg"
             )
+            # Логирование пути
+            logging.debug(f"Default avatar path: {default_avatar_path}")
+            if not default_avatar_path.exists():
+                logging.error("Default avatar not found!")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Default avatar not found",
+                )
             return FileResponse(
                 default_avatar_path, headers={"Cache-Control": "no-store"}
             )
