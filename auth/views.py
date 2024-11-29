@@ -1,14 +1,20 @@
-from typing import Annotated
+from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from uvicorn import logging
 
-from core.models import db_helper
+from core.models import db_helper, User
 from . import auth
-from .auth import get_current_user, oauth2_scheme, refresh_access_token, verify_token
-from .shcemas import UserBase, TokenData
+from .auth import (
+    get_current_user,
+    oauth2_scheme,
+    refresh_access_token,
+    verify_token,
+    get_users_by_ids,
+)
+from .shcemas import UserBase, TokenData, UserResponse, GetUsersByIdsRequest
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -69,6 +75,16 @@ async def refresh(
 @router.get("/da", response_model=UserBase)
 async def da(user: UserBase = Depends(get_current_user)):
     return user
+
+
+@router.post("/getUsersByIds")
+async def get_users_by_ids_view(
+    request: GetUsersByIdsRequest,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    ids = request.ids
+    return await get_users_by_ids(ids=ids, session=session)
 
 
 @router.post("/verifyToken")

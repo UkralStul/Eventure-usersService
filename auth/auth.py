@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 import time
+from typing import List
+
 import jwt
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -142,3 +144,13 @@ async def create_user(
     await session.refresh(new_user)
 
     return new_user
+
+
+async def get_users_by_ids(
+    session: AsyncSession,
+    ids: List[int],
+) -> List[User]:
+    stmt = select(User).filter(User.id.in_(ids))
+    result = await session.execute(stmt)
+    users = list(result.scalars())
+    return users
