@@ -10,7 +10,8 @@ if TYPE_CHECKING:
     from .Message import Message
     from .Conversation import Conversation
 
-#deploy test
+
+# deploy test
 class User(Base):
     __tablename__ = "Users"
 
