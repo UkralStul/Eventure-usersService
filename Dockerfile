@@ -18,7 +18,7 @@ COPY . .
 EXPOSE 8000
 
 # Выполнить все миграции
-CMD ["alembic", "update", "head"]
+CMD ["alembic", "upgrade", "head"]
 
 # Команда запуска FastAPI через Uvicorn
 CMD ["python", "-m", "main"]
