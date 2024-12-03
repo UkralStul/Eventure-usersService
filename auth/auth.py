@@ -159,20 +159,12 @@ async def get_users_by_ids(
 async def get_user(
     session: AsyncSession,
     user_id: int,
-) -> UserResponse | None:
+) -> User | None:
     stmt = select(User).filter(User.id == user_id)
     result = await session.execute(stmt)
     user = result.scalars().first()
     if user:
-        return UserResponse(
-            id=user.id,
-            username=user.username,
-            email=user.email,
-            created_at=user.created_at,
-            profile_photo=user.profile_photo,
-            about_me=user.about_me,
-            last_seen=user.last_seen,
-        )
+        return user
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"

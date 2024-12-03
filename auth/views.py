@@ -12,7 +12,8 @@ from .auth import (
     oauth2_scheme,
     refresh_access_token,
     verify_token,
-    get_users_by_ids, get_user,
+    get_users_by_ids,
+    get_user,
 )
 from .shcemas import UserBase, TokenData, UserResponse, GetUsersByIdsRequest
 
@@ -106,4 +107,7 @@ async def get_user_view(
     session: AsyncSession = Depends(db_helper.session_dependency),
     current_user: User = Depends(get_current_user),
 ):
-    return await get_user(user_id=user_id, session=session)
+    try:
+        return await get_user(user_id=user_id, session=session)
+    except HTTPException as e:
+        raise e
