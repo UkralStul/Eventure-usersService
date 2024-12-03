@@ -19,6 +19,10 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String)
     email: Mapped[str] = mapped_column(String)
     profile_photo: Mapped[str] = mapped_column(String, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        default=datetime.now,
+        server_default=func.now(),
+    )
     birth_date: Mapped[datetime] = mapped_column(nullable=True)
     about_me: Mapped[str] = mapped_column(String, nullable=True)
     last_seen: Mapped[datetime] = mapped_column(nullable=True)
