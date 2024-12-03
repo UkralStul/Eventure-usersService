@@ -17,4 +17,4 @@ COPY . .
 # Открываем порт, на котором будет работать FastAPI
 EXPOSE 8000
 
-ENTRYPOINT ["sh", "-c", "alembic upgrade head && python -m main"]
+CMD alembic upgrade head && python -m main
