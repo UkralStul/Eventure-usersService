@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
 
-from auth.shcemas import UserBase
+from auth.shcemas import UserBase, UserResponse
 from core.config import settings
 from sqlalchemy import select
 from core.models import db_helper
@@ -154,3 +154,24 @@ async def get_users_by_ids(
     result = await session.execute(stmt)
     users = list(result.scalars())
     return users
+
+
+async def get_user(
+    session: AsyncSession,
+    user_id: int,
+) -> UserResponse | None:
+    stmt = select(User).filter(User.id == user_id)
+    result = await session.execute(stmt)
+    user = result.scalars().first()
+    if user:
+        return UserResponse(
+            id=user.id,
+            username=user.username,
+            email=user.email,
+            created_at=user.created_at,
+            profile_photo=user.profile_photo,
+            about_me=user.about_me,
+            last_seen=user.last_seen
+        )
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

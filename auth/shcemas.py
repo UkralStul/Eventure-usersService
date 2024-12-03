@@ -1,5 +1,6 @@
 from typing import List
 
+from black import datetime
 from pydantic import BaseModel
 
 
@@ -13,11 +14,12 @@ class TokenData(BaseModel):
     token: str
 
 
-class UserResponse(BaseModel):
-    id: int
-    username: str
-    profile_pic: str
-
-
 class GetUsersByIdsRequest(BaseModel):
     ids: List[int]
+
+
+class UserResponse(UserBase):
+    created_at: datetime
+    profile_photo: str
+    about_me: str
+    last_seen: datetime
