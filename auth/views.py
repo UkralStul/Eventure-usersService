@@ -101,7 +101,7 @@ async def verify(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@router.get("/getUser", response_model=UserResponse)
+@router.get("/getUser")
 async def get_user_view(
     user_id: int,
     session: AsyncSession = Depends(db_helper.session_dependency),
