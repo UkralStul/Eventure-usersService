@@ -17,8 +17,4 @@ COPY . .
 # Открываем порт, на котором будет работать FastAPI
 EXPOSE 8000
 
-# Выполнить все миграции
-CMD ["alembic", "upgrade", "head"]
-
-# Команда запуска FastAPI через Uvicorn
-CMD ["python", "-m", "main"]
+ENTRYPOINT ["sh", "-c", "alembic upgrade head && python -m main"]
