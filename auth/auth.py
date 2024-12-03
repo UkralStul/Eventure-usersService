@@ -171,7 +171,9 @@ async def get_user(
             created_at=user.created_at,
             profile_photo=user.profile_photo,
             about_me=user.about_me,
-            last_seen=user.last_seen
+            last_seen=user.last_seen,
         )
     else:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )

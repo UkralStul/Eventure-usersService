@@ -12,7 +12,7 @@ from .auth import (
     oauth2_scheme,
     refresh_access_token,
     verify_token,
-    get_users_by_ids,
+    get_users_by_ids, get_user,
 )
 from .shcemas import UserBase, TokenData, UserResponse, GetUsersByIdsRequest
 
@@ -72,11 +72,6 @@ async def refresh(
         )
 
 
-@router.get("/da", response_model=UserBase)
-async def da(user: UserBase = Depends(get_current_user)):
-    return user
-
-
 @router.post("/getUsersByIds")
 async def get_users_by_ids_view(
     request: GetUsersByIdsRequest,
@@ -105,6 +100,10 @@ async def verify(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@router.get("/getTest")
-async def get_test():
-    return "Test25"
+@router.get("/getUser", response_model=UserResponse)
+async def get_user_view(
+    user_id: int,
+    session: AsyncSession = Depends(db_helper.session_dependency),
+    current_user: User = Depends(get_current_user),
+):
+    return await get_user(user_id=user_id, session=session)
