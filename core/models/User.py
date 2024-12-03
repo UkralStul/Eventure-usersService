@@ -1,5 +1,6 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
-from sqlalchemy import String
+from sqlalchemy import String, func
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from .base import Base
@@ -17,7 +18,13 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String)
     email: Mapped[str] = mapped_column(String)
     profile_photo: Mapped[str] = mapped_column(String, nullable=True)
-
+    created_at: Mapped[datetime] = mapped_column(
+        default=datetime.now,
+        server_default=func.now(),
+    )
+    birth_date: Mapped[datetime] = mapped_column(nullable=True)
+    about_me: Mapped[str] = mapped_column(String, nullable=True)
+    last_seen: Mapped[datetime] = mapped_column(nullable=True)
     sent_messages: Mapped[list["Message"]] = relationship(back_populates="sender")
     conversations: Mapped[list["Conversation"]] = relationship(
         secondary=conversation_user_association_table,
