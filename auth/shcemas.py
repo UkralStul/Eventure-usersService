@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class UserBase(BaseModel):
@@ -19,6 +19,7 @@ class GetUsersByIdsRequest(BaseModel):
 
 
 class UserResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     username: str
     profile_photo: Optional[str] = None
@@ -27,5 +28,3 @@ class UserResponse(BaseModel):
     about_me: Optional[str] = None
     last_seen: Optional[datetime] = None
     is_friend: bool
-
-    from_attributes=True

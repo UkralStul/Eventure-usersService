@@ -187,7 +187,7 @@ async def get_user(
     user_is_friend = friendship is not None
 
     # Используем `from_orm` для создания Pydantic объекта из SQLAlchemy объекта
-    user_response = UserResponse.from_orm(user)
+    user_response = UserResponse.model_validate(user)
     user_response.is_friend = user_is_friend  # Добавляем информацию о дружбе
 
     return user_response
