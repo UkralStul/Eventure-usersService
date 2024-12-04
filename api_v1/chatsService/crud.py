@@ -68,6 +68,7 @@ async def create_conversation(
         .join(Conversation.users)
         .group_by(Conversation.id)
         .having(func.array_agg(User.id).op("@>")(users_ids))
+        .options(selectinload(Conversation.users))  # Загружаем пользователей для беседы
     )
     result = await session.execute(stmt)
     existing_conversation = result.scalars().first()
@@ -83,6 +84,10 @@ async def create_conversation(
     new_conversation = Conversation(users=users)
     session.add(new_conversation)
     await session.commit()
+
+    # После создания беседы, подгружаем пользователей
+    await session.refresh(new_conversation)
+    new_conversation.users = [user for user in new_conversation.users if user.id != users_ids[0]]
 
     return new_conversation
 
