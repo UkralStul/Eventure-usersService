@@ -67,7 +67,9 @@ async def create_conversation(
         select(Conversation)
         .join(Conversation.users)
         .group_by(Conversation.id)
-        .having(func.array_agg(User.id).contains(users_ids))
+        .having(
+            func.array_agg(User.id).op("@>")(users_ids)
+        )
     )
     result = await session.execute(stmt)
     existing_conversation = result.scalars().first()
