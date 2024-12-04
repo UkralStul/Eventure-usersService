@@ -87,7 +87,9 @@ async def create_conversation(
 
     # После создания беседы, подгружаем пользователей
     await session.refresh(new_conversation)
-    new_conversation.users = [user for user in new_conversation.users if user.id != users_ids[0]]
+    new_conversation.users = [
+        user for user in new_conversation.users if user.id != users_ids[0]
+    ]
 
     return new_conversation
 

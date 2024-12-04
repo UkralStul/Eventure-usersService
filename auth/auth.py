@@ -12,7 +12,7 @@ from sqlalchemy.engine import Result
 from auth.shcemas import UserBase, UserResponse
 from core.config import settings
 from sqlalchemy import select
-from core.models import db_helper
+from core.models import db_helper, Friendship
 from core.models.User import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -159,13 +159,35 @@ async def get_users_by_ids(
 async def get_user(
     session: AsyncSession,
     user_id: int,
-) -> User | None:
+    current_user: int,
+) -> UserResponse:
     stmt = select(User).filter(User.id == user_id)
     result = await session.execute(stmt)
     user = result.scalars().first()
-    if user:
-        return user
-    else:
+
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
+
+    # Проверяем, являются ли пользователи друзьями
+    friendship_stmt = (
+        select(Friendship)
+        .filter(
+            ((Friendship.user_id == current_user) & (Friendship.friend_id == user_id))
+            | ((Friendship.user_id == user_id) & (Friendship.friend_id == current_user))
+        )
+        .filter(Friendship.status == "accepted")
+    )
+
+    friendship_result = await session.execute(friendship_stmt)
+    friendship = friendship_result.scalars().first()
+
+    # Добавляем информацию о статусе дружбы
+    user_is_friend = friendship is not None
+
+    # Используем `from_orm` для создания Pydantic объекта из SQLAlchemy объекта
+    user_response = UserResponse.from_orm(user)
+    user_response.is_friend = user_is_friend  # Добавляем информацию о дружбе
+
+    return user_response

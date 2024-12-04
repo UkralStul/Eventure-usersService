@@ -108,6 +108,8 @@ async def get_user_view(
     current_user: User = Depends(get_current_user),
 ):
     try:
-        return await get_user(user_id=user_id, session=session)
+        return await get_user(
+            user_id=user_id, session=session, current_user=current_user
+        )
     except HTTPException as e:
         raise e

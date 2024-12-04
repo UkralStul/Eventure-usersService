@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from datetime import datetime
 from pydantic import BaseModel
@@ -18,8 +18,15 @@ class GetUsersByIdsRequest(BaseModel):
     ids: List[int]
 
 
-class UserResponse(UserBase):
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    profile_photo: Optional[str] = None
     created_at: datetime
-    profile_photo: str
-    about_me: str
-    last_seen: datetime
+    birth_date: Optional[datetime] = None
+    about_me: Optional[str] = None
+    last_seen: Optional[datetime] = None
+    is_friend: bool
+
+    class Config:
+        orm_mode = True
