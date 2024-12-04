@@ -28,5 +28,4 @@ class UserResponse(BaseModel):
     last_seen: Optional[datetime] = None
     is_friend: bool
 
-    class Config:
-        orm_mode = True
+    from_attributes=True
