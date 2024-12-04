@@ -27,4 +27,4 @@ class UserResponse(BaseModel):
     birth_date: Optional[datetime] = None
     about_me: Optional[str] = None
     last_seen: Optional[datetime] = None
-    is_friend: bool
+    is_friend: Optional[bool] = None
