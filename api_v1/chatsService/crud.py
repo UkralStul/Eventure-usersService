@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from core.models import Message, Conversation, User
-from sqlalchemy import select
+from sqlalchemy import select, func
 from fastapi import HTTPException, status
 
 
@@ -55,16 +55,35 @@ async def send_message(
     return new_message
 
 
+from sqlalchemy import select, and_
+
+
 async def create_conversation(
     users_ids: list[int],
     session: AsyncSession,
-) -> Conversation:
+) -> Conversation | None:
+    # Проверка существующей беседы
+    stmt = (
+        select(Conversation)
+        .join(Conversation.users)
+        .group_by(Conversation.id)
+        .having(func.array_agg(User.id).contains(users_ids))
+    )
+    result = await session.execute(stmt)
+    existing_conversation = result.scalars().first()
+
+    if existing_conversation:
+        return None
+
+    # Если беседа не найдена, создаем новую
     stmt = select(User).filter(User.id.in_(users_ids))
     user_result = await session.execute(stmt)
-    users = user_result.scalars().all()
+    users = list(user_result.scalars().all())
+
     new_conversation = Conversation(users=users)
     session.add(new_conversation)
     await session.commit()
+
     return new_conversation
 
 
