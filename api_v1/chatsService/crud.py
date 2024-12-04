@@ -61,21 +61,19 @@ from sqlalchemy import select, and_
 async def create_conversation(
     users_ids: list[int],
     session: AsyncSession,
-) -> Conversation | None:
+) -> Conversation:
     # Проверка существующей беседы
     stmt = (
         select(Conversation)
         .join(Conversation.users)
         .group_by(Conversation.id)
-        .having(
-            func.array_agg(User.id).op("@>")(users_ids)
-        )
+        .having(func.array_agg(User.id).op("@>")(users_ids))
     )
     result = await session.execute(stmt)
     existing_conversation = result.scalars().first()
 
     if existing_conversation:
-        return None
+        return existing_conversation
 
     # Если беседа не найдена, создаем новую
     stmt = select(User).filter(User.id.in_(users_ids))
