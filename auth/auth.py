@@ -184,9 +184,11 @@ async def get_user(
     friendship = friendship_result.scalars().first()
 
     # Добавляем информацию о статусе дружбы
-    user_is_friend = friendship is not None
-
+    if friendship:
+        is_friend = friendship.status
+    else:
+        is_friend = None
     user_response = UserResponse.model_validate(user)
-    user_response.is_friend = user_is_friend  # Добавляем информацию о дружбе
+    user_response.is_friend = is_friend  # Добавляем информацию о дружбе
 
     return user_response
