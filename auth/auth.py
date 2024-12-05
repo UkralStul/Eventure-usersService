@@ -177,7 +177,7 @@ async def get_user(
             ((Friendship.user_id == current_user) & (Friendship.friend_id == user_id))
             | ((Friendship.user_id == user_id) & (Friendship.friend_id == current_user))
         )
-        .filter(Friendship.status == "accepted")
+        .filter(Friendship.status.in_(["accepted", "pending"]))
     )
 
     friendship_result = await session.execute(friendship_stmt)
