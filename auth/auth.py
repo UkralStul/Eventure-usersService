@@ -183,12 +183,15 @@ async def get_user(
     friendship_result = await session.execute(friendship_stmt)
     friendship = friendship_result.scalars().first()
 
+    user_response = UserResponse.model_validate(user)
+
     # Добавляем информацию о статусе дружбы
     if friendship:
         is_friend = friendship.status
+        user_response.friend_request_sent_by = friendship.sent_by
     else:
         is_friend = None
-    user_response = UserResponse.model_validate(user)
+
     user_response.is_friend = is_friend  # Добавляем информацию о дружбе
 
     return user_response

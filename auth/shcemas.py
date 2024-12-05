@@ -28,3 +28,4 @@ class UserResponse(BaseModel):
     about_me: Optional[str] = None
     last_seen: Optional[datetime] = None
     is_friend: Optional[str] = None
+    friend_request_sent_by: Optional[int] = None

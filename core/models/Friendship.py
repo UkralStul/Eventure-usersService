@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import String, ForeignKey, Integer
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from .base import Base
@@ -12,6 +12,6 @@ class Friendship(Base):
     status: Mapped[str] = mapped_column(
         String, default="pending"
     )  # e.g., "pending", "accepted"
-
+    sent_by: Mapped[int] = mapped_column(Integer)
     user: Mapped["User"] = relationship("User", foreign_keys=[user_id])
     friend: Mapped["User"] = relationship("User", foreign_keys=[friend_id])

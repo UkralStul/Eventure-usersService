@@ -32,7 +32,10 @@ async def send_friends_request(
         return {"message": "Friendship established."}
 
     new_friendship_request = Friendship(
-        user_id=user_id, friend_id=target_user_id, status="pending"
+        user_id=user_id,
+        friend_id=target_user_id,
+        status="pending",
+        sent_by=user_id,
     )
     session.add(new_friendship_request)
     await session.commit()
