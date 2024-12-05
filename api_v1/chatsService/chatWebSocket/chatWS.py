@@ -39,7 +39,7 @@ async def websocket_endpoint(
 
             message_to_broadcast = MessageToBroadcast(
                 id=new_message.id,
-                sender=user,
+                sender_id=user.id,
                 content=message_text,
                 timestamp=new_message.timestamp.strftime("%m/%d/%Y, %H:%M:%S"),
             )

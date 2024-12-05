@@ -1,12 +1,10 @@
 import datetime
 from pydantic import BaseModel
 
-from core.models import User
-
 
 class MessageToBroadcast(BaseModel):
     id: int
-    sender: User
+    sender_id: int
     content: str
     timestamp: str
 
