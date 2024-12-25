@@ -18,7 +18,7 @@ from core.models.User import User
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
-
+#test
 async def get_password_hash(password):
     return pwd_context.hash(password)
 
