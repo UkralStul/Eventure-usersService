@@ -1,6 +1,6 @@
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from uvicorn import logging
@@ -13,7 +13,7 @@ from .auth import (
     refresh_access_token,
     verify_token,
     get_users_by_ids,
-    get_user,
+    get_user, search_users,
 )
 from .shcemas import UserBase, TokenData, UserResponse, GetUsersByIdsRequest
 
@@ -113,3 +113,22 @@ async def get_user_view(
         )
     except HTTPException as e:
         raise e
+
+
+@router.get("/userSearch", response_model=List[UserResponse])
+async def get_user_view(
+    query: str,
+    session: AsyncSession = Depends(db_helper.session_dependency),
+    current_user: User = Depends(get_current_user),
+    offset: int = Query(0, description="Offset for pagination"),
+    limit: int = Query(20, description="Limit for pagination")
+):
+    return await search_users(query, session, current_user, offset, limit)
+
+
+
+
+
+
+
+

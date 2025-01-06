@@ -195,3 +195,38 @@ async def get_user(
     user_response.is_friend = is_friend  # Добавляем информацию о дружбе
 
     return user_response
+
+
+async def search_users(
+    query: str, session: AsyncSession, current_user: User, offset: int = 0, limit: int = 20
+) -> List[UserResponse]:
+    statement = select(User).where(User.username.ilike(f"%{query}%")).offset(offset).limit(limit)
+    result = await session.execute(statement)
+    users = result.scalars().all()
+
+    user_responses = []
+    for user in users:
+        # Проверяем, являются ли пользователи друзьями
+        friendship_stmt = (
+            select(Friendship)
+            .filter(
+                ((Friendship.user_id == current_user.id) & (Friendship.friend_id == user.id))
+                | ((Friendship.user_id == user.id) & (Friendship.friend_id == current_user.id))
+            )
+            .filter(Friendship.status.in_(["accepted", "pending"]))
+        )
+
+        friendship_result = await session.execute(friendship_stmt)
+        friendship = friendship_result.scalars().first()
+
+        user_response = UserResponse.model_validate(user)
+
+        # Добавляем информацию о статусе дружбы
+        if friendship:
+           user_response.is_friend = friendship.status
+           user_response.friend_request_sent_by = friendship.sent_by
+        else:
+             user_response.is_friend = None
+
+        user_responses.append(user_response)
+    return user_responses
