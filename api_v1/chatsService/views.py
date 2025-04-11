@@ -3,7 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth import get_current_user
 from core.models import db_helper, User
-from .crud import get_conversations, create_conversation, send_message, get_messages, delete_message
+from .crud import (
+    get_conversations,
+    create_conversation,
+    send_message,
+    get_messages,
+    delete_message,
+)
 
 router = APIRouter(tags=["chat"])
 
@@ -59,6 +65,7 @@ async def get_messages_view(
         session=session,
         user_id=user.id,
     )
+
 
 @router.post("/deleteMessage/{message_id}")
 async def delete_message_view(
