@@ -189,3 +189,4 @@ async def delete_message(
         )
 
     await session.delete(message)
+    await session.commit()

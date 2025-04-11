@@ -67,7 +67,7 @@ async def get_messages_view(
     )
 
 
-@router.post("/deleteMessage/{message_id}")
+@router.delete("/{message_id}")
 async def delete_message_view(
     message_id: int,
     session: AsyncSession = Depends(db_helper.session_dependency),
