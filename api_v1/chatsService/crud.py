@@ -173,3 +173,19 @@ async def get_messages(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No messages in this chat",
         )
+
+
+async def delete_message(
+    session: AsyncSession,
+    message_id: int,
+):
+    stmt = select(Message).filter(Message.id == message_id)
+    message_result = await session.execute(stmt)
+    message = message_result.scalars().first()
+    if not message:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Message not found",
+        )
+
+    await session.delete(message)
